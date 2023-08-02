@@ -42,12 +42,12 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "28:b8:cc:b7:ee:43:48:ed:2f:59:5d:9e:99:a9:89:c0"
+            - "5c:b4:f2:fa:8d:c0:ae:ea:6e:29:c0:9c:7d:08:0d:72"
       - run: 
           name: Deploy via ssh
           command: |
               echo Starting to deploy server
-              ssh -v $SSH_USER@$SSH_HOST 'cd ~/express-example/ && git checkout dev && git pull && npm i && pm2 start app.json
+              ssh -v $SSH_USER@$SSH_HOST 'cd ~/express-example/ && git checkout test_circleci && git pull && npm i && pm2 start app.json
 
 workflows:
   version: 2
