@@ -47,7 +47,7 @@ jobs:
           name: Deploy via ssh
           command: |
               echo Starting to deploy server
-              ssh -oStrictHostKeyChecking=no -v $SSH_USER@$SSH_HOST 'cd ~/express-example/ && git checkout test_circleci && git pull && whoami && npm i && pm2 start app.json'
+              ssh -oStrictHostKeyChecking=no -v $SSH_USER@$SSH_HOST 'cd ~/express-example/ && git checkout test_circleci && git pull && whoami > text.txt && npm i && pm2 start app.json'
 
 workflows:
   version: 2
