@@ -1,0 +1,56 @@
+version: 2.1
+aliases:
+  - &restore-cache
+    restore_cache:
+        keys:
+        - v1-dependencies-
+        - v1-dependencies-
+  - &install-deps
+    run:
+        name: Install dependencies
+        command: npm i
+
+orbs:
+  node: circleci/node@3.0.0
+
+jobs:
+  build:
+    environment:
+      DOCKER_IMAGE: ichhoa129/test
+      DOCKER_TAG: latest
+    working_directory: ~/express-example
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *restore-cache
+      - run: npm cache clear --force
+      - run:
+          name: Update NPM version
+          command: 'sudo npm install -g npm@latest'
+      - *install-deps
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+       
+  deploy:
+    docker:
+      - image: circleci/node:14
+    working_directory: ~/express-example
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "28:b8:cc:b7:ee:43:48:ed:2f:59:5d:9e:99:a9:89:c0"
+      - run: 
+          name: Deploy via ssh
+          command: |
+              echo Starting to deploy server
+              ssh -v $SSH_USER@$SSH_HOST 'cd ~/express-example/ && git checkout dev && git pull && npm i && pm2 start app.json
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - deploy
